@@ -1,7 +1,7 @@
 close all
 clear variables
 clc
-
+%% Simulation Parameters
 % Simulation Parameters
 waypointspacing = 5; %spacing between waypoints measured along the path in m.
 vx = 5; % m/s. Constant longitudinal speed of the car for the simulation.
@@ -22,7 +22,7 @@ displayoverview = true; %Displays an overview of the entire course above the sim
 writegif = false; %drawrealtime must be enabled to record gif.
 
 reversetrack = false;
-
+%% Definitions
 
 global trajectory
 global gains
@@ -44,7 +44,7 @@ if reversetrack
     end
     points = temppoints;
 end
-
+%% Creating Splines
 lane1 = points(:,1:2);
 lane2 = points(:,3:4);
 center = points(:,5:6);
@@ -61,7 +61,7 @@ x3 = linspace(center(1,1),center(length(center),1),1000);
 y3 = f3(x3);
 
 xsample = [center(1,1)];
-
+%% Collects Way Points
 diff = waypointspacing;
 j = 1;
 arc_length = 0;
@@ -96,12 +96,12 @@ else
 end
 
 points = [xsample' f3(xsample)];
-
+%% Lookahead
 trajectory = points(:,1:2);
 
 setLookahead([1;2;3], trajectory(1:3,:));
 
-
+%% Solving Differential Equation
 step = 0.1;
 if reversetrack
     options = odeset('MaxStep',.05);
@@ -116,7 +116,7 @@ else
     [t_car,q_car] = ode45(@(t,q) bicycleModel(t,q,car,vx), 0:step:totaltime, [points(1,1),points(1,2),-.1,0,0], options);
 end
 fprintf('Differential Equation Solved!\n')
-
+%% Plotting
 %Map the t values of steerangle and fbangle to the t values of t_car (the results of
 %the ode solver)
 steeringanglenorm = zeros(length(t_car),1);
