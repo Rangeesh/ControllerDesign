@@ -1,4 +1,4 @@
-function [xc,yc,R] = circleFit(preview_data)
+function circle = circleFit(preview_data)
 %CircleFit takes at least 3 or more given waypoints
 %and calculates the x position, y position, and radius
 %of the circle that crosses each waypoint.
@@ -20,7 +20,6 @@ A=[a11 a12; a12 a22];
 b1 = Sx*(Sx2+Sy2)-m*(Sx3+Sxy2);
 b2 = Sy*(Sx2+Sy2)-m*(Sx2y+Sy3);
 b=[b1;b2];
- 
         if -1*10^12<det(A) && det(A)<1*10^-12
             R = inf;
             xc = inf;
@@ -30,6 +29,8 @@ b=[b1;b2];
             xc=cntr(1); yc=cntr(2);
             Xtilde = X-xc; Ytilde = Y-yc;
             R = sqrt((Xtilde'*Xtilde + Ytilde'*Ytilde)/m);
-
         end
+circle.xc   =   xc;
+circle.yc   =   yc;
+circle.R    =   R;
 end

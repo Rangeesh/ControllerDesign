@@ -28,9 +28,9 @@ for i=1:length(gains)
 end
 
 %  Lateral Error
-xcir = lookahead.circleFit(1);      %circle's center x position 
-ycir = lookahead.circleFit(2);      %circle's center y position 
-r = lookahead.circleFit(3);         %circle's radius
+xcir = lookahead.circleFit.xc;      %circle's center x position 
+ycir = lookahead.circleFit.yc;      %circle's center y position 
+r = lookahead.circleFit.R;         %circle's radius
 
 if(r==inf)  %this means the 3 points are collinear
     if dy == 0 && dx == 0

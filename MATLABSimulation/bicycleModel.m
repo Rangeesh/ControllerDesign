@@ -1,4 +1,4 @@
-function [ dz ] = bicycleModel( t, q, car, vx )
+function [ dz ] = bicycleModel( t, q, car, vx, preview )
 global df_points ffangle fbangle steerangle
 Cf = car.Cf; %redefine car inertial parameters for ease of use.
 Cr = car.Cr;
@@ -14,7 +14,8 @@ vy = q(4);
 w = q(5);
 
 %get required steer angle from subroutine
-updatePoints(x,y);
+% updatePoints(x,y);
+newUpdatePoints(x,y,vx,preview);
 dff = feedforward(car,vx);
 dfb = feedback(x,y,vx,theta,w);
 df = dff+dfb;

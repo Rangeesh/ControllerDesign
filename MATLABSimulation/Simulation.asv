@@ -3,8 +3,8 @@ clear variables
 clc
 %% Simulation Parameters
 % Simulation Parameters
-waypointspacing = 1; %spacing between waypoints measured along the path in m.
-preview         = 0.5; %Time Preview of Vehicle 
+waypointspacing = 0.5; %spacing between waypoints measured along the path in m.
+preview         = 1; %Time Preview of Vehicle 
 vx              = 5; % m/s. Constant longitudinal speed of the car for the simulation.
 totaltime       = 50; %Time to run the simulation for.
 
@@ -337,7 +337,7 @@ if drawrealtime
         subplot(4,6,[11 12]);
         hold on
         if i>1
-            plot(q_car(i-1,1),radius(i-1),'b')
+            plot([q_car(i-1,1), q_car(i,1)],[radius(i-1), radius(i)],'b')
         end
         
         subplot(4,6,[17 18]);

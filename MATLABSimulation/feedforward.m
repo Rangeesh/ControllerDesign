@@ -17,7 +17,7 @@ BC = q2-q3;
 abbc = [AB;BC];
 turning = det(abbc);
 direc = sign(turning);
-r = lookahead.circleFit(3);
+r = lookahead.circleFit.R;
    
     %heading and output of the code.
 dff = direc*((car.a+car.b)/r + car.ksg*vx^2/(9.81*r));
