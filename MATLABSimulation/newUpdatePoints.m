@@ -24,7 +24,11 @@ end
 % Output: starting row_index of your preview.
 
 lookahead_local=newSetLookahead(row_index,vx, preview);
-radius = [radius, lookahead_local.circleFit.R];
+if lookahead_local.circleFit.R<1000
+    radius = [radius, lookahead_local.circleFit.R];
+else
+    radius = [radius, 1000];
+end
 
 % Pass this as parameter to newSetLookahead
 % It should compute the required points. And it's xc,yc,R.

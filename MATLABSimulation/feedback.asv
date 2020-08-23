@@ -104,8 +104,6 @@ if theta_wrap<0
     theta_wrap = theta_wrap+2*pi;
 end
 
-lateralerror=[lateralerror;elat];
-
 theta_wrap = theta_wrap - pi;
 eyaw = theta_wrap;
 dfb = klat*elat + kyawrate*eyawrate + kyaw*eyaw;

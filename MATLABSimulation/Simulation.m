@@ -1,6 +1,8 @@
 close all
 clear variables
 clc
+% Don't go reversetrack. 
+% Will have to change x-axis of graphs for oval track
 %% Simulation Parameters
 % Simulation Parameters
 waypointspacing = 1; %spacing between waypoints measured along the path in m.
@@ -12,9 +14,9 @@ totaltime       = 50; %Time to run the simulation for.
 axismoves       = true; %Set it to true to have the position vs. time zoom in on the car and move with it. False to display the entire graph zoomed out without motion.
 axiswidth       = 5; %dimensions of the zoomed-in graph window, if axismoves is set to true.
 simulationspeed = 2; %Simulation speed in multiples of real time. i.e. 2 is twice real time, 1 is real time, etc.
-drawrealtime    = true; %if true, the green line moves at the speed of the vehicle. If not, the whole graph draws instantly.
+drawrealtime    = false; %if true, the green line moves at the speed of the vehicle. If not, the whole graph draws instantly.
 drawwheels      = true;
-calculateerror  = true; %Calculates distances from wheels to lane. Computationally expensive, so it can be toggled to save time.
+calculateerror  = false; %Calculates distances from wheels to lane. Computationally expensive, so it can be toggled to save time.
 displayoverview = true; %Displays an overview of the entire course above the simulation window. Can be set to false to save time on simulation.
 writegif        = false; %drawrealtime must be enabled to record gif.
 reversetrack    = false;
@@ -24,11 +26,15 @@ global trajectory
 global gains
 global ffangle fbangle steerangle
 global radius 
+global lateralerror
 
 gains = csvread('gains.csv');
 ffangle = [];
 fbangle = [];
 steerangle = [];
+radius=[];
+lateralerror=[];
+
 
 car = defineCar();
 
@@ -120,11 +126,15 @@ fprintf('Differential Equation Solved!\n')
 steeringanglenorm = zeros(length(t_car),1);
 fbanglenorm = zeros(length(t_car),1);
 ffanglenorm = zeros(length(t_car),1);
+radiusnorm = zeros(length(t_car),1);
+lateralerrornorm = zeros(length(t_car),1);
 for i=1:length(t_car)
-    [c steerind] = min(abs(steerangle(:,1)-t_car(i)));
+    [c steerind] = min(abs(steerangle(:,1)-t_car(i))); % Takes the closest time
     steeranglenorm(i) = steerangle(steerind,2);
     fbanglenorm(i) = fbangle(steerind,2);
     ffanglenorm(i) = ffangle(steerind,2);
+    radiusnorm(i) = radius(steerind);
+    lateralerrornorm(i) = lateralerror(steerind);
 end
 
 trackwidth = 1.7145-8*0.0254;
@@ -196,18 +206,18 @@ if displayoverview
 end
 
 subplot(4,6,[5 6]);
-ylim([-0.2,1.8]);
+ylim([min(lateralerrornorm),max(lateralerrornorm)]);
 if reversetrack
     xlim([q_car(length(q_car),1),q_car(1,1)]);
 else
     xlim([q_car(1,1),q_car(length(q_car),1)]);
 end
-title('Nearest Distance from Car Wheel to Lane Edge')
+title('Lateral Error')
 xlabel('X Position (m)')
 ylabel('Distance (m)')
 
 subplot(4,6,[11 12]);
-ylim([0,1000]);
+ylim([min(radiusnorm),max(radiusnorm)]);
 if reversetrack
     xlim([q_car(length(q_car),1),q_car(1,1)]);
 else
@@ -331,13 +341,13 @@ if drawrealtime
         subplot(4,6,[5 6]);
         hold on
         if i>1
-            plot([q_car(i-1,1), q_car(i,1)] ,[error(i-1), error(i)],'b');
+            plot([q_car(i-1,1), q_car(i,1)] ,[lateralerrornorm(i-1), lateralerrornorm(i)],'b');
         end
         
         subplot(4,6,[11 12]);
         hold on
         if i>1
-            plot(q_car(i-1,1),radius(i-1),'b')
+            plot([q_car(i-1,1), q_car(i,1)] ,[radiusnorm(i-1), radiusnorm(i)],'b')
         end
         
         subplot(4,6,[17 18]);
@@ -396,29 +406,29 @@ else
     
     subplot(4,6,[5 6]);
     hold on
-    plot(q_car(:,1),error(:),'b');
-    ylim([-0.2,1.8]);
+    plot(q_car(:,1),lateralerrornorm(:),'b');
+    ylim([min(lateralerrornorm),max(lateralerrornorm)]);
     if reversetrack
         xlim([q_car(length(q_car),1),q_car(1,1)]);
     else
         xlim([q_car(1,1),q_car(length(q_car),1)]);
     end
-    title('Nearest Distance from Car Wheel to Lane Edge')
+    title('Lateral Error')
     xlabel('X Position (m)')
     ylabel('Distance (m)')
     
     subplot(4,6,[11 12]);
     hold on
-    plot(q_car(:,1),steeranglenorm(:),'b')
-    ylim([-34*pi/180,34*pi/180]);
+    plot(q_car(:,1),radiusnorm(:),'b')
+    ylim([min(radiusnorm),max(radiusnorm)]);
     if reversetrack
         xlim([q_car(length(q_car),1),q_car(1,1)]);
     else
         xlim([q_car(1,1),q_car(length(q_car),1)]);
     end
-    title('Requested Total Steer Angle')
+    title('Radius of Curvature')
     xlabel('X Position (m)')
-    ylabel('Steer Angle (rad)')
+    ylabel('Radius (m)')
     
     subplot(4,6,[17 18]);
     hold on
