@@ -5,8 +5,8 @@ clc
 % Will have to change x-axis of graphs for oval track
 %% Simulation Parameters
 % Simulation Parameters
-waypointspacing = 1; %spacing between waypoints measured along the path in m.
-preview         = 0.5; %Time Preview of Vehicle 
+waypointspacing = 0.1; %spacing between waypoints measured along the path in m.
+preview         = 2; %Time Preview of Vehicle 
 vx              = 5; % m/s. Constant longitudinal speed of the car for the simulation.
 totaltime       = 50; %Time to run the simulation for.
 

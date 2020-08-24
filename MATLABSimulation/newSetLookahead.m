@@ -26,7 +26,7 @@ end
 
 lookahead.i= row_index:row_i;
 lookahead.points = trajectory(row_index:row_i,:);
-circle=circleFit(lookahead.points); % [xc, yc, r] inf if straight line.
+circle=newCircleFit(lookahead.points); % [xc, yc, r] inf if straight line.
 lookahead.circleFit=circle;
 
 
